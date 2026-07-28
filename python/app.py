@@ -43,7 +43,26 @@ if st.button("Predict Churn",type = "primary",use_container_width = True):
     order_category_val = order_category_map[order_category]
     marital_status_val = marital_status_map[marital_status]
     complain_val = 1 if complain == "Yes" else 0
-    input_data =np.array([[tenure,login_device_val,city_tier,warehouse_distance,payment_mode_val,gender_val,hour_on_app,devices,order_category_val, satisfaction,marital_status_val,number_of_add,complain_val,order_amt_hike_from_last_yr,coupon_used,order_count,days_last_order,cashback]])
+    input_df = pd.DataFrame([{
+    'Tenure': tenure,
+    'PreferredLoginDevice': login_device_val,
+    'CityTier': city_tier,
+    'WarehouseToHome': warehouse_distance,
+    'PreferredPaymentMode': payment_mode_val,
+    'Gender': gender_val,
+    'HourSpendOnApp': hour_on_app,
+    'NumberOfDeviceRegistered': devices,
+    'PreferedOrderCat': order_category_val,
+    'SatisfactionScore': satisfaction,
+    'MaritalStatus': marital_status_val,
+    'NumberOfAddress': number_of_add,
+    'Complain': complain_val,
+    'OrderAmountHikeFromlastYear': order_amt_hike_from_last_yr,
+    'CouponUsed': coupon_used,
+    'OrderCount': order_count,
+    'DaySinceLastOrder': days_last_order,
+    'CashbackAmount': cashback
+}])
     prob = model.predict_proba(input_data)[0][1]
     prediction = model.predict(input_data)[0]
     st.subheader("Prediction Result")
