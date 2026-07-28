@@ -2,7 +2,7 @@ import streamlit as st
 import pickle
 import numpy as np
 import pandas as pd
-with open('churn_model.pkl','rb') as f:
+with open('python/churn_model.pkl','rb') as f:
     model = pickle.load(f)
 st.set_page_config(page_title = "Customer Churn Predictor",page_icon = "🔴",layout = "centered")
 st.title("🔴Customer Churn Predictor")
