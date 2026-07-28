@@ -4,6 +4,10 @@ import numpy as np
 import pandas as pd
 with open('python/churn_model.pkl','rb') as f:
     model = pickle.load(f)
+with open('python/scaler.pkl','rb') as f:
+    scaler = pickle.load(f)
+with open('python/label_encoders.pkl','rb') as f:
+    label_encoders = pickle.load(f)
 st.set_page_config(page_title = "Customer Churn Predictor",page_icon = "🔴",layout = "centered")
 st.title("🔴Customer Churn Predictor")
 st.markdown("Enter customer details below to predict churn probability")
@@ -32,16 +36,11 @@ with col3:
     coupon_used = st.slider("Coupon Used",0,16,8)
 st.divider()
 if st.button("Predict Churn",type = "primary",use_container_width = True):
-    login_device_map = {"Computer":0,"Mobile Phone":1}
-    payment_mode_map = {"Cash on Delivery":0, "Credit Card":1,"Debit Card":2,"E wallet":3,"UPI":4}
-    gender_map = {"Female":0,"Male":1}
-    order_category_map = {"Fashion":0,"Grocery":1,"Laptop & Accessory":2,"Mobile Phone":3,"Others":4}
-    marital_status_map = {"Divorced":0,"Married":1,"Single":2}
-    login_device_val = login_device_map[login_device]
-    payment_mode_val = payment_mode_map[payment_mode]
-    gender_val = gender_map[gender]
-    order_category_val = order_category_map[order_category]
-    marital_status_val = marital_status_map[marital_status]
+    login_device_val = label_encoders['PreferredLoginDevice'].transform([login_device])[0]
+    payment_mode_val = label_encoders['PreferredPaymentMode'].transform([payment_mode])[0]
+    gender_val = label_encoders['Gender'].transform([gender])[0]
+    order_category_val = label_encoders['PreferedOrderCat'].transform([order_category])[0]
+    marital_status_val = label_encoders['MaritalStatus'].transform([marital_status])[0]
     complain_val = 1 if complain == "Yes" else 0
     input_df = pd.DataFrame([{
     'Tenure': tenure,
@@ -63,6 +62,7 @@ if st.button("Predict Churn",type = "primary",use_container_width = True):
     'DaySinceLastOrder': days_last_order,
     'CashbackAmount': cashback
 }])
+    input_scaled = scaler.transform(input_df)
     prob = model.predict_proba(input_df)[0][1]
     prediction = model.predict(input_df)[0]
     st.subheader("Prediction Result")
