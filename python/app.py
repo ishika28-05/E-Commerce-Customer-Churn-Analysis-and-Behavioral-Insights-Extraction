@@ -63,8 +63,8 @@ if st.button("Predict Churn",type = "primary",use_container_width = True):
     'DaySinceLastOrder': days_last_order,
     'CashbackAmount': cashback
 }])
-    prob = model.predict_proba(input_data)[0][1]
-    prediction = model.predict(input_data)[0]
+    prob = model.predict_proba(input_df)[0][1]
+    prediction = model.predict(input_df)[0]
     st.subheader("Prediction Result")
     if prediction ==1:
        st.error(f"⚠️ High Churn Risk -{prob*100:.1f}% probability of churning")
