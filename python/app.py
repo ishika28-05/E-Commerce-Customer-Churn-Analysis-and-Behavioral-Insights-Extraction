@@ -4,8 +4,6 @@ import numpy as np
 import pandas as pd
 with open('python/churn_model.pkl','rb') as f:
     model = pickle.load(f)
-with open('python/scaler.pkl','rb') as f:
-    scaler = pickle.load(f)
 with open('python/label_encoders.pkl','rb') as f:
     label_encoders = pickle.load(f)
 st.set_page_config(page_title = "Customer Churn Predictor",page_icon = "🔴",layout = "centered")
@@ -62,7 +60,6 @@ if st.button("Predict Churn",type = "primary",use_container_width = True):
     'DaySinceLastOrder': days_last_order,
     'CashbackAmount': cashback
 }])
-    input_scaled = scaler.transform(input_df)
     prob = model.predict_proba(input_df)[0][1]
     prediction = model.predict(input_df)[0]
     st.subheader("Prediction Result")
