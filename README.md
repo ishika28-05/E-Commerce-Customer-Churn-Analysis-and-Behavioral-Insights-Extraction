@@ -74,6 +74,12 @@ A score this high is normally a red flag for data leakage — so I stress-tested
 - Benchmarked against a shallow Decision Tree (max depth 3), which still hit 87.8% accuracy — confirming the dataset is naturally separable
 
 **Conclusion:** Short-tenure customers who file complaints are highly predictable churn risks, making this a cleanly separable classification problem.
+### Handling Class Imbalance
+The dataset is imbalanced — roughly 83% of customers are retained vs. 17% who churn (4,682 vs. 948). This is common in real-world churn data, since most customers don't churn in any given period.
+
+I tested class_weight='balanced' to see whether re-weighting the minority class would improve how confidently the model flags at-risk customers. In practice, it didn't produce a consistent improvement: for some profiles it increased predicted churn probability, but for others it decreased it — an expected outcome, since re-weighting reshapes the entire decision boundary rather than uniformly boosting churn scores. Given that the unweighted model already achieves a 99.9% ROC-AUC and a well-calibrated confusion matrix (only 18 misclassifications out of 1,126 test customers), I kept the standard RandomForestClassifier without class weighting, since it offered more interpretable, stable behavior for this use case.
+
+Key takeaway: high overall performance metrics (like ROC-AUC) don't automatically mean every individual prediction will feel intuitive — model behavior on any single customer reflects the combination of all 18 features, not just the one or two that seem most obviously "risky." This is why the app's "Key Factors" section should be read as contributing signals rather than a full explanation of the model's reasoning — a natural next step (noted in Future Improvements) is adding SHAP values to show the true per-prediction feature contributions.
 
 ### Confusion Matrix (Test Set: 1,126 customers)
 | | Predicted: Stay | Predicted: Leave |
